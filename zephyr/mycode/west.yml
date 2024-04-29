@@ -1,0 +1,32 @@
+# Dependant on the west manifest file for upstream Zephyr.
+# Zephyr revision should only point to an official release commit.
+#
+# Only imports subprojects currently required to minimise cloning time.
+
+manifest:
+  defaults:
+    remote: upstream
+
+  remotes:
+    - name: upstream
+      url-base: https://github.com/zephyrproject-rtos
+
+  projects:
+    - name: zephyr
+      repo-path: zephyr
+      revision: main
+      import:
+        name-whitelist:
+          - cmsis
+          - hal_nordic
+          - hal_stm32
+          - mbedtls
+          - mcuboot
+          - mcumgr
+          - segger
+          - tinycbor
+          - tinycrypt
+
+  self:
+    path: sXXXXXXXX
+    west-commands: scripts/west-commands.yml

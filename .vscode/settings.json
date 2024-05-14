@@ -1,5 +1,9 @@
 {
     "files.associations": {
-        "zephyr.h": "c"
+        "zephyr.h": "c",
+        "bluetooth.h": "c",
+        "uuid.h": "c",
+        "conn.h": "c",
+        "gatt.h": "c"
     }
 }

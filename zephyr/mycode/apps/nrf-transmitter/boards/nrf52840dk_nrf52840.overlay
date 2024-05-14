@@ -1,11 +1,12 @@
-/ {
-		ir_receiver: ir_receiver {
-			gpios = <&gpio0 3 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
-			label = "Push button switch 00";
-			zephyr,code = <INPUT_KEY_0>;
-		};
+&pwm0 {
+	status = "disabled";
+};
 
-		aliases {
-			irrec = &ir_receiver;
-		};
+&sw_pwm {
+	status = "okay";
+	channel-gpios = <&gpio0 13 PWM_POLARITY_INVERTED>;
+};
+
+&pwm_led0 {
+	pwms = <&sw_pwm 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
 };

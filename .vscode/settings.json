@@ -4,6 +4,8 @@
         "bluetooth.h": "c",
         "uuid.h": "c",
         "conn.h": "c",
-        "gatt.h": "c"
+        "gatt.h": "c",
+        "gpio.h": "c",
+        "stdlib.h": "c"
     }
 }

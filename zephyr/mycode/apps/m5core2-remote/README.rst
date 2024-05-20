@@ -1,97 +1,93 @@
-.. zephyr:code-sample:: blinky
-   :name: Blinky
-   :relevant-api: gpio_interface
+.. zephyr:code-sample:: lvgl
+   :name: LVGL basic sample
+   :relevant-api: display_interface input_interface
 
-   Blink an LED forever using the GPIO API.
+   Display a "Hello World" and react to user input using LVGL.
 
 Overview
 ********
 
-The Blinky sample blinks an LED forever using the :ref:`GPIO API <gpio_api>`.
+This sample application displays "Hello World" in the center of the screen
+and a counter at the bottom which increments every second.
+Based on the available input devices on the board used to run the sample,
+additional widgets may be displayed and additional interactions enabled:
 
-The source code shows how to:
-
-#. Get a pin specification from the :ref:`devicetree <dt-guide>` as a
-   :c:struct:`gpio_dt_spec`
-#. Configure the GPIO pin as an output
-#. Toggle the pin forever
-
-See :zephyr:code-sample:`pwm-blinky` for a similar sample that uses the PWM API instead.
-
-.. _blinky-sample-requirements:
+* Pointer
+      If your board has a touch panel controller
+      (:dtcompatible:`zephyr,lvgl-pointer-input`), a button widget is displayed
+      in the center of the screen. Otherwise a label widget is displayed.
+* Button
+      The button pseudo device (:dtcompatible:`zephyr,lvgl-button-input`) maps
+      a press/release action to a specific coordinate on screen. In the case
+      of this sample, the coordinates are mapped to the center of the screen.
+* Encoder
+      The encoder pseudo device (:dtcompatible:`zephyr,lvgl-encoder-input`)
+      can be used to navigate between widgets and edit their values. If the
+      board contains an encoder, an arc widget is displayed, which can be
+      edited.
+* Keypad
+      The keypad pseudo device (:dtcompatible:`zephyr,lvgl-keypad-input`) can
+      be used for focus shifting and also entering characters inside editable
+      widgets such as text areas. If the board used with this sample has a
+      keypad device, a button matrix is displayed at the bottom of the screen
+      to showcase the focus shifting capabilities.
 
 Requirements
 ************
 
-Your board must:
+Display shield and a board which provides a configuration
+for corresponding connectors, for example:
 
-#. Have an LED connected via a GPIO pin (these are called "User LEDs" on many of
-   Zephyr's :ref:`boards`).
-#. Have the LED configured using the ``led0`` devicetree alias.
+- :ref:`adafruit_2_8_tft_touch_v2` and :ref:`nrf52840dk_nrf52840`
+- :ref:`buydisplay_2_8_tft_touch_arduino` and :ref:`nrf52840dk_nrf52840`
+- :ref:`ssd1306_128_shield` and :ref:`frdm_k64f`
+- :ref:`seeed_xiao_round_display` and :ref:`xiao_ble`
+
+or a board with an integrated display:
+
+- :ref:`esp_wrover_kit`
+
+or a simulated display environment in a :ref:`native_sim <native_sim>` application:
+
+- :ref:`native_sim`
+- `SDL2`_
+
+or
+
+- :ref:`mimxrt1050_evk`
+- `RK043FN02H-CT`_
+
+or
+
+- :ref:`mimxrt1060_evk`
+- `RK043FN02H-CT`_
 
 Building and Running
 ********************
 
-Build and flash Blinky as follows, changing ``reel_board`` for your board:
+Example building for :ref:`nrf52840dk_nrf52840`:
 
 .. zephyr-app-commands::
-   :zephyr-app: samples/basic/blinky
-   :board: reel_board
+   :zephyr-app: samples/subsys/display/lvgl
+   :board: nrf52840dk/nrf52840
+   :shield: adafruit_2_8_tft_touch_v2
    :goals: build flash
-   :compact:
 
-After flashing, the LED starts to blink and messages with the current LED state
-are printed on the console. If a runtime error occurs, the sample exits without
-printing to the console.
+Example building for :ref:`native_sim <native_sim>`:
 
-Build errors
-************
+.. zephyr-app-commands::
+   :zephyr-app: samples/subsys/display/lvgl
+   :board: native_sim
+   :goals: build run
 
-You will see a build error at the source code line defining the ``struct
-gpio_dt_spec led`` variable if you try to build Blinky for an unsupported
-board.
+Alternatively, if building from a 64-bit host machine, the previous target
+board argument may also be replaced by ``native_sim/native/64``.
 
-On GCC-based toolchains, the error looks like this:
+References
+**********
 
-.. code-block:: none
+.. target-notes::
 
-   error: '__device_dts_ord_DT_N_ALIAS_led_P_gpios_IDX_0_PH_ORD' undeclared here (not in a function)
-
-Adding board support
-********************
-
-To add support for your board, add something like this to your devicetree:
-
-.. code-block:: DTS
-
-   / {
-   	aliases {
-   		led0 = &myled0;
-   	};
-
-   	leds {
-   		compatible = "gpio-leds";
-   		myled0: led_0 {
-   			gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
-                };
-   	};
-   };
-
-The above sets your board's ``led0`` alias to use pin 13 on GPIO controller
-``gpio0``. The pin flags :c:macro:`GPIO_ACTIVE_HIGH` mean the LED is on when
-the pin is set to its high state, and off when the pin is in its low state.
-
-Tips:
-
-- See :dtcompatible:`gpio-leds` for more information on defining GPIO-based LEDs
-  in devicetree.
-
-- If you're not sure what to do, check the devicetrees for supported boards which
-  use the same SoC as your target. See :ref:`get-devicetree-outputs` for details.
-
-- See :zephyr_file:`include/zephyr/dt-bindings/gpio/gpio.h` for the flags you can use
-  in devicetree.
-
-- If the LED is built in to your board hardware, the alias should be defined in
-  your :ref:`BOARD.dts file <devicetree-in-out-files>`. Otherwise, you can
-  define one in a :ref:`devicetree overlay <set-devicetree-overlays>`.
+.. _LVGL Web Page: https://lvgl.io/
+.. _SDL2: https://www.libsdl.org
+.. _RK043FN02H-CT: https://www.nxp.com/products/processors-and-microcontrollers/arm-based-processors-and-mcus/i.mx-applications-processors/i.mx-rt-series/4.3-lcd-panel:RK043FN02H-CT
